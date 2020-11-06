@@ -1,7 +1,6 @@
 
 "use strict";
 
-
 const firstLocation = {
   lat: 36.964,
   lng: -122.015,
@@ -158,7 +157,7 @@ function goToLocation(mapLocation, firstVisit=false) {
     staticMapUrl += "&maptype=" + mapOptions.mapTypeId;
     //Set the Google Map Zoom.
     staticMapUrl += "&zoom=" + mapLocation.zoom;
-    staticMapUrl += "&key=AIzaSyDEwDxANvJbCrTv4f_r_LgnidF4xPxMCrg"
+    staticMapUrl += "&key=AIzaSyDEwDxANvJbCrTv4f_r_LgnidF4xPxMCrg";
     //Display the Image of Google Map.
     var imgMap = document.getElementById("imgMap");
     imgMap.setAttribute("src", staticMapUrl);
