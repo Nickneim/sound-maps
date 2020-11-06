@@ -154,7 +154,8 @@ function goToLocation(mapLocation, addToLastVisited=true) {
   if (!mapLocation.hasOwnProperty('index')) {
     mapLocation.index = mapHistory.findIndex(otherLocation => {
       return (mapLocation.lat == otherLocation.lat &&
-              mapLocation.lng == otherLocation.lng);
+              mapLocation.lng == otherLocation.lng && 
+              mapLocation.zoom == otherLocation.zoom);
     })
     if (mapLocation.index < 0) {
       mapLocation.index = mapHistory.length;
