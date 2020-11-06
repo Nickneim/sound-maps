@@ -36,9 +36,20 @@ const recommendations = [
     'rgb': {'r': 128, 'g': 128, 'b': 116},
     'lat': -31.438,
     'lng': -64.195,
+    'zoom': 14,
+  },
+  {
+    'rgb': {'r': 104, 'g': 107, 'b': 100},
+    'lat': -42.91,
+    'lng': -71.32,
     'zoom': 14
   }
 ]
+
+// recommendations.forEach(recommendation => {
+//   recommendation.index = -1;
+// });
+
 const mapHistory = [firstLocation];
 const lastVisited = [];
 var currentLocation = firstLocation;
@@ -116,15 +127,11 @@ function onImageLoad() {
 }
 
 
-function goToLocation(mapLocation, firstVisit=false) {
-
-  if (firstVisit && currentLocation.index != null) {
-    lastVisited.push(currentLocation.index);
-  }
+function goToLocation(mapLocation, addToLastVisited=true) {
 
   controlLatitude.value = mapLocation.lat.toFixed(3);
   controlLatitude.placeholder = mapLocation.lat.toFixed(3);
-  controlLongitude.textContent = mapLocation.lng.toFixed(3);
+  controlLongitude.value = mapLocation.lng.toFixed(3);
   controlLongitude.placeholder = mapLocation.lng.toFixed(3);
 
   map.setCenter({lat: mapLocation.lat, lng: mapLocation.lng});
@@ -132,6 +139,17 @@ function goToLocation(mapLocation, firstVisit=false) {
     mapLocation.zoom = map.getZoom();
   }
   map.setZoom(mapLocation.zoom);
+
+  if (mapLocation.lat == currentLocation.lat &&
+      mapLocation.lng == currentLocation.lng &&
+      mapLocation.zoom == currentLocation.zoom)
+    return;
+
+  if (addToLastVisited) {
+    lastVisited.push(currentLocation.index);
+  }
+
+  currentLocation = mapLocation;
 
   if (!mapLocation.hasOwnProperty('index')) {
     mapLocation.index = mapHistory.findIndex(otherLocation => {
@@ -215,7 +233,7 @@ function BackControl(controlDiv, map) {
     if (lastVisited.length == 0) {
       return;
     }
-    goToLocation(mapHistory[lastVisited.pop()]);
+    goToLocation(mapHistory[lastVisited.pop()], false);
   });
   
 }
@@ -278,7 +296,7 @@ function HistoryControl(controlDiv, map) {
     controlHistoryOption.addEventListener('click', function() {
       goToLocation(mapLocation);
     });
-    controlHistoryContent.appendChild(controlHistoryOption);
+    controlHistoryContent.insertBefore(controlHistoryOption, controlHistoryContent.firstChild);
   }
 
   addHistoryOption(firstLocation);
@@ -308,19 +326,37 @@ function RecommendationsControl(controlDiv, map) {
   controlRecommendationsContent.classList.add('dropdown-content');
   controlRecommendations.appendChild(controlRecommendationsContent);
   
-  // Set CSS for the control interior.
-  var controlRecommendationsOption = document.createElement('div');
-  controlRecommendationsOption.classList.add('controlInterior');
-  controlRecommendationsOption.classList.add('dropdown-item');
-  controlRecommendationsOption.textContent = 'Chicago';
-  controlRecommendationsContent.appendChild(controlRecommendationsOption);
+  // // Set CSS for the control interior.
+  // var controlRecommendationsOption = document.createElement('div');
+  // controlRecommendationsOption.classList.add('controlInterior');
+  // controlRecommendationsOption.classList.add('dropdown-item');
+  // controlRecommendationsOption.textContent = 'Chicago';
+  // controlRecommendationsContent.appendChild(controlRecommendationsOption);
 
-  // Set CSS for the control interior.
-  var controlRecommendationsOption = document.createElement('div');
-  controlRecommendationsOption.classList.add('controlInterior');
-  controlRecommendationsOption.classList.add('dropdown-item');
-  controlRecommendationsOption.textContent = '13.142,31.512';
-  controlRecommendationsContent.appendChild(controlRecommendationsOption);
+  // // Set CSS for the control interior.
+  // var controlRecommendationsOption = document.createElement('div');
+  // controlRecommendationsOption.classList.add('controlInterior');
+  // controlRecommendationsOption.classList.add('dropdown-item');
+  // controlRecommendationsOption.textContent = '13.142,31.512';
+  // controlRecommendationsContent.appendChild(controlRecommendationsOption);
+
+  recommendations.forEach(mapLocation => {
+    // Set CSS for the control interior.
+    var controlRecommendationsOption = document.createElement('div');
+    controlRecommendationsOption.classList.add('controlInterior');
+    controlRecommendationsOption.classList.add('dropdown-item');
+    controlRecommendationsOption.textContent = mapLocation.lat.toFixed(3) + ', ' + mapLocation.lng.toFixed(3);
+    const rgb = mapLocation.rgb;
+    controlRecommendationsOption.style.backgroundColor = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
+    // mapLocation.historyOption = controlRecommendationsOption
+    controlRecommendationsOption.addEventListener('click', function() {
+      goToLocation(mapLocation);
+    });
+    controlRecommendationsContent.appendChild(controlRecommendationsOption);
+  });
+  
+
+
   
 }
 
@@ -372,7 +408,7 @@ function JumpCoordinatesControl(controlDiv, map) {
   controlGo.addEventListener('click', function() {
     const lat = parseFloat(controlLatitude.value);
     const lng = parseFloat(controlLongitude.value);
-    goToLocation({lat: lat, lng: lng}, true);
+    goToLocation({lat: lat, lng: lng});
   });
 
 }
