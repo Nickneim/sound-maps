@@ -367,8 +367,8 @@ function JumpCoordinatesControl(controlDiv, map) {
   controlLatitude.type = 'number';
   controlLatitude.step = 'any';
   controlLatitude.required = true;
-  controlLatitude.max = '85';
-  controlLatitude.min = '-85';
+  controlLatitude.max = '90';
+  controlLatitude.min = '-90';
   controlLatitude.placeholder = firstLocation.lat.toFixed(3);
   // controlLatitude.placeholder="-31.4381414";
   controlLatitude.textContent = 'Latitud';
@@ -405,7 +405,7 @@ function JumpCoordinatesControl(controlDiv, map) {
     event.preventDefault();
     const lat = parseFloat(controlLatitude.value);
     const lng = parseFloat(controlLongitude.value);
-    if (lat >= -85 && lat <= 85 && !isNaN(lng)) 
+    if (lat >= -90 && lat <= 90 && !isNaN(lng)) 
       goToLocation({lat: lat, lng: lng});
   });
 
