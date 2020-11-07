@@ -352,13 +352,13 @@ function RecommendationsControl(controlDiv, map) {
 
 function JumpCoordinatesControl(controlDiv, map) {
   // Set CSS for the control border.
-  var controlUI = document.createElement('div');
+  const controlUI = document.createElement('form');
   controlUI.classList.add('controlBorder');
   controlUI.title = 'Coordenadas';
   controlUI.style.overflow = 'hidden';
   controlDiv.appendChild(controlUI);
 
-  var controlCoordinates = document.createElement('div');
+  const controlCoordinates = document.createElement('div');
   controlCoordinates.style.float = 'left';
   controlUI.appendChild(controlCoordinates);
   // Set CSS for the control Latitude.
@@ -366,6 +366,7 @@ function JumpCoordinatesControl(controlDiv, map) {
   controlLatitude.classList.add('controlInterior');
   controlLatitude.type = 'number';
   controlLatitude.step = 'any';
+  controlLatitude.required = true;
   controlLatitude.max = '85';
   controlLatitude.min = '-85';
   controlLatitude.placeholder = firstLocation.lat.toFixed(3);
@@ -373,12 +374,17 @@ function JumpCoordinatesControl(controlDiv, map) {
   controlLatitude.textContent = 'Latitud';
   controlLatitude.style.display = 'block';
   controlCoordinates.appendChild(controlLatitude);
+  const controlValidity = document.createElement('span');
+  controlValidity.classList.add('validity');
+  controlCoordinates.appendChild(controlValidity);
+  
 
   // Set CSS for the control Longitude.
   controlLongitude = document.createElement('input');
   controlLongitude.classList.add('controlInterior');
   controlLongitude.type = 'number';
   controlLongitude.step = 'any';
+  controlLongitude.required = true;
   controlLongitude.placeholder = firstLocation.lng.toFixed(3);
   // controlLongitude.placeholder="-64.1955601";
   controlLongitude.textContent = 'Longitud';
@@ -388,17 +394,19 @@ function JumpCoordinatesControl(controlDiv, map) {
   // Set CSS for the control interior.
   var controlGo = document.createElement('button');
   controlGo.classList.add('controlInterior');
+  controlGo.type = 'submit'
   // controlGo.style.display = 'inline';
   // controlGo.style.clear = "none";
   // controlGo.style.clear = "none";
   controlGo.textContent = 'Go';
   controlUI.appendChild(controlGo);
 
-  // Setup the click event listeners: simply set the map to Chicago.
-  controlGo.addEventListener('click', function() {
+  controlUI.addEventListener('submit', function(event) {
+    event.preventDefault();
     const lat = parseFloat(controlLatitude.value);
     const lng = parseFloat(controlLongitude.value);
-    goToLocation({lat: lat, lng: lng});
+    if (lat >= -85 && lat <= 85 && !isNaN(lng)) 
+      goToLocation({lat: lat, lng: lng});
   });
 
 }
