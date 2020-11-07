@@ -180,8 +180,8 @@ function goToLocation(mapLocation, addToLastVisited=true) {
     lastVisited.push(currentLocation.index);
   }
 
-  const voice = voices[Math.floor(Math.random() * voices.length)];
-  textAudio.setAttribute('src', 'static/voces/' + voice);
+  // const voice = voices[Math.floor(Math.random() * voices.length)];
+  // textAudio.setAttribute('src', 'static/voces/' + voice);
   // textAudio.load();
   // textAudio.play();
 
