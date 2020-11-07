@@ -6,7 +6,8 @@ const firstLocation = {
   lng: -122.015,
   zoom: 14,
   index: 0,
-  rgb: {r: 100, g: 100, b: 102}
+  // rgb: {r: 100, g: 100, b: 102},
+  rgb: {r: 92, g: 93, b: 96},  // colorthief
 }
 
 
@@ -30,25 +31,24 @@ var map;
 var chicago = {lat: 41.85, lng: -87.65};
 const backgroundMusic = new Audio();
 const textAudio = new Audio();
+const colorThief = new ColorThief();
 
 const recommendations = [
   {
-    'rgb': {'r': 128, 'g': 128, 'b': 116},
-    'lat': -31.438,
-    'lng': -64.195,
-    'zoom': 14,
+    // 'rgb': {'r': 128, 'g': 128, 'b': 116},
+    rgb: {r: 141, g: 140, b: 127},    // colorthief
+    lat: -31.438,
+    lng: -64.195,
+    zoom: 14,
   },
   {
-    'rgb': {'r': 104, 'g': 107, 'b': 100},
-    'lat': -42.91,
-    'lng': -71.32,
-    'zoom': 14
+    // rgb: {r: 104, g: 107, b: 100},
+    rgb: {r: 95, g: 100, b: 93}, // colorthief
+    lat: -42.91,
+    lng: -71.32,
+    zoom: 14,
   }
 ]
-
-// recommendations.forEach(recommendation => {
-//   recommendation.index = -1;
-// });
 
 const mapHistory = [firstLocation];
 const lastVisited = [];
@@ -122,7 +122,10 @@ function updateRGB(mapLocation) {
 
 
 function onImageLoad() {
-  currentLocation.rgb = getAverageRGB(document.getElementById('imgMap'));
+  // currentLocation.rgb = getAverageRGB(document.getElementById('imgMap'));
+  // console.log(colorThief.getColor(document.getElementById('imgMap')))
+  const rgb = colorThief.getPalette(document.getElementById('imgMap'), 2, 1)[0];
+  currentLocation.rgb = {r: rgb[0], g: rgb[1], b: rgb[2]};
   updateRGB(currentLocation);
 }
 
@@ -327,20 +330,6 @@ function RecommendationsControl(controlDiv, map) {
   controlRecommendationsContent.classList.add('dropdown-content');
   controlRecommendations.appendChild(controlRecommendationsContent);
   
-  // // Set CSS for the control interior.
-  // var controlRecommendationsOption = document.createElement('div');
-  // controlRecommendationsOption.classList.add('controlInterior');
-  // controlRecommendationsOption.classList.add('dropdown-item');
-  // controlRecommendationsOption.textContent = 'Chicago';
-  // controlRecommendationsContent.appendChild(controlRecommendationsOption);
-
-  // // Set CSS for the control interior.
-  // var controlRecommendationsOption = document.createElement('div');
-  // controlRecommendationsOption.classList.add('controlInterior');
-  // controlRecommendationsOption.classList.add('dropdown-item');
-  // controlRecommendationsOption.textContent = '13.142,31.512';
-  // controlRecommendationsContent.appendChild(controlRecommendationsOption);
-
   recommendations.forEach(mapLocation => {
     // Set CSS for the control interior.
     var controlRecommendationsOption = document.createElement('div');
