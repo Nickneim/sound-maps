@@ -31,6 +31,24 @@ var map;
 var chicago = {lat: 41.85, lng: -87.65};
 const backgroundMusic = new Audio();
 const textAudio = new Audio();
+
+
+const voices = [
+  '2/2 CHINO (simplificado).wav',
+  '2/2 BENGALÍ.wav',
+  '2/2 ESPAÑOL.wav',
+  '2/2 MARATÍ.wav',
+  '2/2 SUAJILI.wav',
+  '2/2.wav',
+  '1/1.wav',
+  '1/1 ESPAÑOL.wav',
+  '1/1 RUMANO.wav',
+  '1/1 LETÓN.wav',
+  '1/1 LATIN.wav',
+  '1/1 HINDI.wav',
+];
+
+
 const colorThief = new ColorThief();
 
 const recommendations = [
@@ -115,9 +133,6 @@ function updateRGB(mapLocation) {
   if (mapLocation.hasOwnProperty('historyOption')) {
     mapLocation.historyOption.style.backgroundColor = rgbString;
   }
-  // backgroundMusic.setAttribute('src', 'static/15step.mp3');
-  // backgroundMusic.load();
-  // backgroundMusic.play();
 }
 
 
@@ -151,6 +166,11 @@ function goToLocation(mapLocation, addToLastVisited=true) {
   if (addToLastVisited) {
     lastVisited.push(currentLocation.index);
   }
+
+  const voice = voices[Math.floor(Math.random() * voices.length)];
+  textAudio.setAttribute('src', 'static/voces/' + voice);
+  textAudio.load();
+  textAudio.play();
 
   currentLocation = mapLocation;
 
