@@ -48,6 +48,9 @@ const voices = [
   '1/1 HINDI.wav',
 ];
 
+const musicList = [
+  'CIUDAD 2.mp3',
+]
 
 const colorThief = new ColorThief();
 
@@ -133,6 +136,15 @@ function updateRGB(mapLocation) {
   if (mapLocation.hasOwnProperty('historyOption')) {
     mapLocation.historyOption.style.backgroundColor = rgbString;
   }
+
+  const music = musicList[0];
+  backgroundMusic.setAttribute('src', 'static/musica/' + music);
+  backgroundMusic.load();
+  const colorDiff = Math.abs(rgb.r - rgb.g) + Math.abs(rgb.g - rgb.b) + Math.abs(rgb.r - rgb.b);
+  if (colorDiff < 40)
+    backgroundMusic.play();
+  else
+    backgroundMusic.pause();
 }
 
 
