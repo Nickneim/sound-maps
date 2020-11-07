@@ -31,6 +31,7 @@ var map;
 var chicago = {lat: 41.85, lng: -87.65};
 const backgroundMusic = new Audio();
 const textAudio = new Audio();
+backgroundMusic.volume = 0.5;
 
 
 const voices = [
@@ -181,8 +182,8 @@ function goToLocation(mapLocation, addToLastVisited=true) {
 
   const voice = voices[Math.floor(Math.random() * voices.length)];
   textAudio.setAttribute('src', 'static/voces/' + voice);
-  textAudio.load();
-  textAudio.play();
+  // textAudio.load();
+  // textAudio.play();
 
   currentLocation = mapLocation;
 
