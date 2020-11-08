@@ -81,6 +81,15 @@ var controlLongitude;
 
 var addHistoryOption;
 
+var paletteSize = 4;
+var paletteQuality = 1;
+
+function getLocationFromColor(rgb) {
+  const colorDiff = Math.abs(rgb.r - rgb.g) + Math.abs(rgb.g - rgb.b) + Math.abs(rgb.r - rgb.b);
+  if (colorDiff < 40)
+    return 'ciudad';
+  return '?';
+}
 
 
 function getAverageRGB(imgEl) {
@@ -138,22 +147,39 @@ function updateRGB(mapLocation) {
     mapLocation.historyOption.style.backgroundColor = rgbString;
   }
 
-  const music = musicList[0];
-  backgroundMusic.setAttribute('src', 'static/musica/' + music);
-  backgroundMusic.load();
-  const colorDiff = Math.abs(rgb.r - rgb.g) + Math.abs(rgb.g - rgb.b) + Math.abs(rgb.r - rgb.b);
-  if (colorDiff < 40)
-    backgroundMusic.play();
-  else
-    backgroundMusic.pause();
+  console.log("Latitud: " + mapLocation.lat + " Longitud: " + mapLocation.lng);
+  mapLocation.palette.forEach(color => {
+    const colorString = 'rgb('+color[0]+','+color[1]+','+color[2]+')';
+    console.log("%c " + colorString, "background: "+colorString);
+  });
+
+  const locationFromColor = getLocationFromColor(rgb);
+  console.log("Ubicación: " + locationFromColor);
+
+  // const music = musicList[0];
+  // backgroundMusic.setAttribute('src', 'static/musica/' + music);
+  // backgroundMusic.load();
+  // if (locationFromColor === 'ciudad')
+  //   backgroundMusic.play();
+  // else
+  //   backgroundMusic.pause();
 }
 
 
 function onImageLoad() {
   // currentLocation.rgb = getAverageRGB(document.getElementById('imgMap'));
   // console.log(colorThief.getColor(document.getElementById('imgMap')))
-  const rgb = colorThief.getPalette(document.getElementById('imgMap'), 2, 1)[0];
-  currentLocation.rgb = {r: rgb[0], g: rgb[1], b: rgb[2]};
+  if (paletteSize != 1) {
+    const palette = colorThief.getPalette(document.getElementById('imgMap'), paletteSize, paletteQuality);
+    const rgb = palette[0];
+    currentLocation.rgb = {r: rgb[0], g: rgb[1], b: rgb[2]};
+    currentLocation.palette = palette;
+  }
+  else {
+    const rgb = colorThief.getColor(document.getElementById('imgMap'), paletteQuality);
+    currentLocation.rgb = {r: rgb[0], g: rgb[1], b: rgb[2]};
+    currentLocation.palette = [rgb];
+  }
   updateRGB(currentLocation);
 }
 
@@ -171,10 +197,10 @@ function goToLocation(mapLocation, addToLastVisited=true) {
   }
   map.setZoom(mapLocation.zoom);
 
-  if (mapLocation.lat == currentLocation.lat &&
-      mapLocation.lng == currentLocation.lng &&
-      mapLocation.zoom == currentLocation.zoom)
-    return;
+  // if (mapLocation.lat == currentLocation.lat &&
+  //     mapLocation.lng == currentLocation.lng &&
+  //     mapLocation.zoom == currentLocation.zoom)
+  //   return;
 
   if (addToLastVisited) {
     lastVisited.push(currentLocation.index);
@@ -202,7 +228,7 @@ function goToLocation(mapLocation, addToLastVisited=true) {
     }
   }
 
-  if (!mapLocation.hasOwnProperty('rgb')) { 
+  if (true || !mapLocation.hasOwnProperty('rgb')) { 
     var staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap";
     //Set the Google Map Center.
     staticMapUrl += "?center=" + mapLocation.lat + "," + mapLocation.lng;
