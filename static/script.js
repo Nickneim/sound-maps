@@ -33,21 +33,32 @@ const backgroundMusic = new Audio();
 const textAudio = new Audio();
 backgroundMusic.volume = 0.5;
 
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
 
-const voices = [
-  '2/2 CHINO (simplificado).wav',
-  '2/2 BENGALÍ.wav',
-  '2/2 ESPAÑOL.wav',
-  '2/2 MARATÍ.wav',
-  '2/2 SUAJILI.wav',
-  '2/2.wav',
-  '1/1.wav',
-  '1/1 ESPAÑOL.wav',
-  '1/1 RUMANO.wav',
-  '1/1 LETÓN.wav',
-  '1/1 LATIN.wav',
-  '1/1 HINDI.wav',
-];
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+const voices = [];
+var voice_index = null;
+
+fetch('static/voces/lista_de_voces.txt')
+  .then(response => response.text())
+  .then(text => voices.push.apply(voices, text.split(/\r?\n/)));
+  // outputs the content of the text file
 
 const musicList = [
   'CIUDAD 2.mp3',
@@ -206,10 +217,18 @@ function goToLocation(mapLocation, addToLastVisited=true) {
     lastVisited.push(currentLocation.index);
   }
 
-  // const voice = voices[Math.floor(Math.random() * voices.length)];
-  // textAudio.setAttribute('src', 'static/voces/' + voice);
-  // textAudio.load();
-  // textAudio.play();
+  if (voice_index == null || voice_index >= voices.length) {
+    shuffle(voices);
+    console.log(voices);
+    voice_index = 0;
+  }
+
+  const voice = voices[voice_index];
+  voice_index += 1;
+  console.log("Reproduciendo " + voice);
+  textAudio.setAttribute('src', 'static/voces/' + voice);
+  textAudio.load();
+  textAudio.play();
 
   currentLocation = mapLocation;
 
