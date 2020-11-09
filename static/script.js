@@ -225,7 +225,7 @@ function goToLocation(mapLocation, addToLastVisited=true) {
 
   const voice = voices[voice_index];
   voice_index += 1;
-  console.log("Reproduciendo " + voice);
+  document.getElementById('language-control').textContent = voice.slice(2, -4);
   textAudio.setAttribute('src', 'static/voces/' + voice);
   textAudio.load();
   textAudio.play();
@@ -343,6 +343,7 @@ function TitleControl(controlDiv, map) {
   // Set CSS for the control interior.
   var controlLanguage = document.createElement('div');
   controlLanguage.classList.add('controlInterior');
+  controlLanguage.setAttribute('id', 'language-control');
   controlLanguage.textContent = 'Idioma';
   controlUI.appendChild(controlLanguage);
 }
