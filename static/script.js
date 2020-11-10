@@ -29,9 +29,10 @@ const mapOptions = {
 
 var map;
 var chicago = {lat: 41.85, lng: -87.65};
-const backgroundMusic = new Audio();
-const textAudio = new Audio();
-backgroundMusic.volume = 0.5;
+const environmentAudio = new Audio();
+const voiceAudio = new Audio();
+const instrumentalAudio = new Audio();
+// environmentAudio.volume = 0.5;
 
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
@@ -60,9 +61,33 @@ fetch('static/voces/lista_de_voces.txt')
   .then(text => voices.push.apply(voices, text.split(/\r?\n/)));
   // outputs the content of the text file
 
-const musicList = [
-  'CIUDAD 2.mp3',
-]
+const environments = {
+  'bosque': ['aguita.m4a', 'bosque 1.flac', 'cascada.mp3'],
+  'desierto': ['viento grave.mp3'],
+  'selva': ['SELVA 1.mp3', 'SELVA 2.wav', 'SELVA 3.wav'],
+  'urbe': ['CIUDAD 1.wav', 'CIUDAD 4.wav', 'CIUDAD 6.mp3', 'CIUDAD 8.mp3',
+           'CIUDAD 2.mp3', 'CIUDAD 5.wav', 'CIUDAD 7.mp3', 'festival osaka.mp3'],
+}
+
+const instrumentals = [
+  'Copia de 1(1).wav',
+  'Copia de 8.wav',
+  'Copia de 4.wav',
+  'Copia de 9.wav',
+  'Copia de ambiente montaña 3.mp3',
+  'Copia de 2.wav',
+  'Copia de 2(1).wav',
+  'Copia de 4(1).wav',
+  'Copia de Cantos- Yunnan-China.wav',
+  'Copia de 6.wav',
+  'Copia de 3(1).wav',
+  'Copia de 1.wav',
+  'Copia de 3.wav',
+  'Copia de 7.wav',
+  'Copia de 5.wav',
+];
+var instrumental_index = null;
+
 
 const colorThief = new ColorThief();
 
@@ -95,11 +120,42 @@ var addHistoryOption;
 var paletteSize = 4;
 var paletteQuality = 1;
 
-function getLocationFromColor(rgb) {
+function getRandomElement(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+
+function hasImage(rgb) {
+  const noImageryDiff = Math.abs(rgb.r - 227) + Math.abs(rgb.g - 227) + Math.abs(rgb.b - 219);
+  const blankImageDiff = Math.abs(rgb.r - 14) + Math.abs(rgb.g - 14) + Math.abs(rgb.b - 14);
+
+  return !(noImageryDiff < 3 || blankImageDiff < 3);
+}
+
+
+function getEnvironmentFromColor(rgb) {
+  var environment = null;
+  
   const colorDiff = Math.abs(rgb.r - rgb.g) + Math.abs(rgb.g - rgb.b) + Math.abs(rgb.r - rgb.b);
-  if (colorDiff < 40)
-    return 'ciudad';
-  return '?';
+
+  if (!hasImage(rgb))
+    environment = null;
+  else if (rgb.g > rgb.b + 15 && rgb.g > rgb.r + 15) {
+    if (Math.random() < 0.5)
+      environment = 'bosque';
+    else
+      environment = 'selva';
+  }
+  else if (rgb.r > rgb.b + 15 && rgb.r > rgb.g + 15)
+    environment = 'desierto';
+  else if (colorDiff < 45)
+    environment = 'urbe';
+
+  if (environment != null) {
+    return environment + '/' + getRandomElement(environments[environment]);
+  }
+
+  return null;
 }
 
 
@@ -164,16 +220,47 @@ function updateRGB(mapLocation) {
     console.log("%c " + colorString, "background: "+colorString);
   });
 
-  const locationFromColor = getLocationFromColor(rgb);
-  console.log("Ubicación: " + locationFromColor);
+  if (hasImage(rgb)) {
+    if (voice_index == null || voice_index >= voices.length) {
+      shuffle(voices);
+      voice_index = 0;
+    }
+  
+    const voice = voices[voice_index];
+    voice_index += 1;
+    document.getElementById('language-control').textContent = voice.slice(2, -4);
+    voiceAudio.setAttribute('src', 'static/voces/' + voice);
+    voiceAudio.load();
+    voiceAudio.play();
+  
+  
+    if (instrumental_index == null || instrumental_index >= instrumentals.length) {
+      shuffle(instrumentals);
+      instrumental_index = 0;
+    }
+  
+    const instrumental = instrumentals[instrumental_index];
+    instrumental_index += 1;
+    instrumentalAudio.setAttribute('src', 'static/instrumental/' + instrumental);
+    instrumentalAudio.load();
+    instrumentalAudio.play();
+  }
+  else {
+    voiceAudio.pause();
+    instrumentalAudio.pause();
+  }
 
-  // const music = musicList[0];
-  // backgroundMusic.setAttribute('src', 'static/musica/' + music);
-  // backgroundMusic.load();
-  // if (locationFromColor === 'ciudad')
-  //   backgroundMusic.play();
-  // else
-  //   backgroundMusic.pause();
+
+  const environment = getEnvironmentFromColor(rgb);
+  console.log("Ubicación: " + environment);
+
+  if (environment == null)
+    environmentAudio.pause();
+  else {
+    environmentAudio.setAttribute('src', 'static/ambiente/' + environment);
+    environmentAudio.load();
+    environmentAudio.play();
+  }
 }
 
 
@@ -220,19 +307,6 @@ function goToLocation(mapLocation, addToLastVisited=true) {
   if (addToLastVisited) {
     lastVisited.push(currentLocation.index);
   }
-
-  if (voice_index == null || voice_index >= voices.length) {
-    shuffle(voices);
-    console.log(voices);
-    voice_index = 0;
-  }
-
-  const voice = voices[voice_index];
-  voice_index += 1;
-  document.getElementById('language-control').textContent = voice.slice(2, -4);
-  textAudio.setAttribute('src', 'static/voces/' + voice);
-  textAudio.load();
-  textAudio.play();
 
   currentLocation = mapLocation;
 
