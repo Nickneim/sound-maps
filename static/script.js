@@ -32,7 +32,7 @@ var chicago = {lat: 41.85, lng: -87.65};
 const environmentAudio = new Audio();
 const voiceAudio = new Audio();
 const instrumentalAudio = new Audio();
-voiceAudio.volume = 0.3;
+voiceAudio.volume = 0.5;
 // environmentAudio.volume = 0.5;
 
 function shuffle(array) {
