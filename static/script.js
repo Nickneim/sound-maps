@@ -33,6 +33,8 @@ const environmentAudio = new Audio();
 const voiceAudio = new Audio();
 const instrumentalAudio = new Audio();
 voiceAudio.volume = 0.5;
+environmentAudio.loop = true;
+instrumentalAudio.loop = true;
 // environmentAudio.volume = 0.5;
 
 function shuffle(array) {
