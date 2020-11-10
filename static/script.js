@@ -32,6 +32,7 @@ var chicago = {lat: 41.85, lng: -87.65};
 const environmentAudio = new Audio();
 const voiceAudio = new Audio();
 const instrumentalAudio = new Audio();
+voiceAudio.volume = 0.3;
 // environmentAudio.volume = 0.5;
 
 function shuffle(array) {
@@ -241,6 +242,7 @@ function updateRGB(mapLocation) {
   
     const instrumental = instrumentals[instrumental_index];
     instrumental_index += 1;
+    console.log("Reproduciendo " + instrumental);
     instrumentalAudio.setAttribute('src', 'static/instrumental/' + instrumental);
     instrumentalAudio.load();
     instrumentalAudio.play();
