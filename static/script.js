@@ -197,10 +197,14 @@ function onImageLoad() {
 
 function goToLocation(mapLocation, addToLastVisited=true) {
 
-  controlLatitude.value = mapLocation.lat.toFixed(3);
-  controlLatitude.placeholder = mapLocation.lat.toFixed(3);
-  controlLongitude.value = mapLocation.lng.toFixed(3);
-  controlLongitude.placeholder = mapLocation.lng.toFixed(3);
+  const fixedLat = mapLocation.lat.toFixed(3);
+  const fixedLng = mapLocation.lng.toFixed(3);
+  controlLatitude.value = fixedLat;
+  controlLatitude.placeholder = fixedLat;
+  controlLongitude.value = fixedLng;
+  controlLongitude.placeholder = fixedLng;
+
+  history.replaceState(null, '', '?lat=' + fixedLat + '&lng=' + fixedLng);
 
   map.setCenter({lat: mapLocation.lat, lng: mapLocation.lng});
   if (!mapLocation.hasOwnProperty('zoom')) {
@@ -490,6 +494,18 @@ function JumpCoordinatesControl(controlDiv, map) {
 
 }
 function initMap() {
+  var params = new URLSearchParams(window.location.search);
+
+  const paramLat = parseFloat(params.get('lat'))
+  const paramLng = parseFloat(params.get('lng'))
+  if (!isNaN(paramLat)) {
+    firstLocation.lat = paramLat;
+    mapOptions.center.lat = paramLat;
+  }
+  if (!isNaN(paramLng)){
+    firstLocation.lng = paramLng;
+    mapOptions.center.lng = paramLng;
+  }
   map = new google.maps.Map(document.getElementById("map"), 
     mapOptions
   );
