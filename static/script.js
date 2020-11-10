@@ -140,7 +140,7 @@ function getEnvironmentFromColor(rgb) {
 
   if (!hasImage(rgb))
     environment = null;
-  else if (rgb.g > rgb.b + 15 && rgb.g > rgb.r + 15) {
+  else if (rgb.g > rgb.r + 15 && rgb.g > rgb.b + 10) {
     if (Math.random() < 0.5)
       environment = 'bosque';
     else
