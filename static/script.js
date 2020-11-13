@@ -58,38 +58,24 @@ function shuffle(array) {
 
 const voices = [];
 var voice_index = null;
+fetch('static/voces/voces.json')
+  .then(response => response.json())
+  .then(json => voices.push.apply(voices, json));
 
-fetch('static/voces/lista_de_voces.txt')
-  .then(response => response.text())
-  .then(text => voices.push.apply(voices, text.split(/\r?\n/)));
-  // outputs the content of the text file
+const environments = {};
+fetch('static/ambiente/ambientes.json')
+  .then(response => response.json())
+  .then(json => {
+    Object.entries(json).forEach(([key, value]) => {
+      environments[key] = value;
+    });
+  });
 
-const environments = {
-  'bosque': ['aguita.m4a', 'bosque 1.flac', 'cascada.mp3'],
-  'desierto': ['viento grave.mp3'],
-  'selva': ['SELVA 1.mp3', 'SELVA 2.wav', 'SELVA 3.wav'],
-  'urbe': ['CIUDAD 1.wav', 'CIUDAD 4.wav', 'CIUDAD 6.mp3', 'CIUDAD 8.mp3',
-           'CIUDAD 2.mp3', 'CIUDAD 5.wav', 'CIUDAD 7.mp3', 'festival osaka.mp3'],
-}
-
-const instrumentals = [
-  'Copia de 1(1).wav',
-  'Copia de 8.wav',
-  'Copia de 4.wav',
-  'Copia de 9.wav',
-  'Copia de ambiente montaña 3.mp3',
-  'Copia de 2.wav',
-  'Copia de 2(1).wav',
-  'Copia de 4(1).wav',
-  'Copia de Cantos- Yunnan-China.wav',
-  'Copia de 6.wav',
-  'Copia de 3(1).wav',
-  'Copia de 1.wav',
-  'Copia de 3.wav',
-  'Copia de 7.wav',
-  'Copia de 5.wav',
-];
+const instrumentals = [];
 var instrumental_index = null;
+fetch('static/instrumental/instrumentales.json')
+  .then(response => response.json())
+  .then(json => instrumentals.push.apply(instrumentals, json));
 
 
 const colorThief = new ColorThief();
@@ -329,7 +315,7 @@ function goToLocation(mapLocation, addToLastVisited=true) {
     }
   }
 
-  if (true || !mapLocation.hasOwnProperty('rgb')) { 
+  if (!mapLocation.hasOwnProperty('rgb')) { 
     var staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap";
     //Set the Google Map Center.
     staticMapUrl += "?center=" + mapLocation.lat + "," + mapLocation.lng;

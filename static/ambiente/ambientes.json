@@ -1,0 +1,7 @@
+{
+  "bosque": ["aguita.m4a", "bosque 1.flac", "cascada.mp3"],
+  "desierto": ["viento grave.mp3"],
+  "selva": ["SELVA 1.mp3", "SELVA 2.wav", "SELVA 3.wav"],
+  "urbe": ["CIUDAD 1.wav", "CIUDAD 4.wav", "CIUDAD 6.mp3", "CIUDAD 8.mp3",
+           "CIUDAD 2.mp3", "CIUDAD 5.wav", "CIUDAD 7.mp3", "festival osaka.mp3"]
+}
