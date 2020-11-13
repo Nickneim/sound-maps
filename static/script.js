@@ -1,42 +1,7 @@
 
 "use strict";
 
-const firstLocation = {
-  lat: 36.964,
-  lng: -122.015,
-  zoom: 14,
-  index: 0,
-  // rgb: {r: 100, g: 100, b: 102},
-  rgb: {r: 92, g: 93, b: 96},  // colorthief
-}
-
-
-const mapOptions = {
-  zoom: firstLocation.zoom,
-  center: {'lat':firstLocation.lat, 'lng':  firstLocation.lng},
-  mapTypeId: 'satellite',
-  maxZoom: 17,
-  minZoom: 14,
-  gestureHandling: 'none',
-  draggableCursor: 'default',
-  disableDefaultUI: true,
-  zoomControl: true
-  // restriction: {
-  //     latLngBounds: {north: 36.964 + 0.05, south: 36.964 - 0.05, west: -122.015 - 0.05, east: -122.015 + 0.05},
-  //     strictBounds: false
-  // }
-};
-
-var map;
-var chicago = {lat: 41.85, lng: -87.65};
-const environmentAudio = new Audio();
-const voiceAudio = new Audio();
-const instrumentalAudio = new Audio();
-voiceAudio.volume = 0.5;
-environmentAudio.loop = true;
-instrumentalAudio.loop = true;
-// environmentAudio.volume = 0.5;
-
+// utility functions
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -56,12 +21,47 @@ function shuffle(array) {
   return array;
 }
 
+function getRandomElement(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+
+// map initialization variables
+const firstLocation = {
+  lat: 36.964,
+  lng: -122.015,
+  zoom: 14,
+  index: 0,
+  rgb: {r: 92, g: 93, b: 96}
+}
+
+
+const mapOptions = {
+  zoom: firstLocation.zoom,
+  center: {'lat':firstLocation.lat, 'lng':  firstLocation.lng},
+  mapTypeId: 'satellite',
+  maxZoom: 17,
+  minZoom: 14,
+  gestureHandling: 'none',
+  draggableCursor: 'default',
+  disableDefaultUI: true,
+  zoomControl: true
+};
+
+var map;
+
+
+// audio variables
+const voiceAudio = new Audio();
+voiceAudio.volume = 0.5;
 const voices = [];
 var voice_index = null;
 fetch('static/voces/voces.json')
   .then(response => response.json())
   .then(json => voices.push.apply(voices, json));
 
+const environmentAudio = new Audio();
+environmentAudio.loop = true;
 const environments = {};
 fetch('static/ambiente/ambientes.json')
   .then(response => response.json())
@@ -71,6 +71,9 @@ fetch('static/ambiente/ambientes.json')
     });
   });
 
+
+const instrumentalAudio = new Audio();
+instrumentalAudio.loop = true;
 const instrumentals = [];
 var instrumental_index = null;
 fetch('static/instrumental/instrumentales.json')
@@ -78,8 +81,13 @@ fetch('static/instrumental/instrumentales.json')
   .then(json => instrumentals.push.apply(instrumentals, json));
 
 
+// color variables
 const colorThief = new ColorThief();
+var paletteSize = 4;
+var paletteQuality = 1;
 
+
+// map controls variables
 const recommendations = [
   {
     // 'rgb': {'r': 128, 'g': 128, 'b': 116},
@@ -106,14 +114,8 @@ var controlLongitude;
 
 var addHistoryOption;
 
-var paletteSize = 4;
-var paletteQuality = 1;
 
-function getRandomElement(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-
+// color functions
 function hasImage(rgb) {
   const noImageryDiff = Math.abs(rgb.r - 227) + Math.abs(rgb.g - 227) + Math.abs(rgb.b - 219);
   const blankImageDiff = Math.abs(rgb.r - 14) + Math.abs(rgb.g - 14) + Math.abs(rgb.b - 14);
@@ -124,7 +126,7 @@ function hasImage(rgb) {
 
 function getEnvironmentFromColor(rgb) {
   var environment = null;
-  
+
   const colorDiff = Math.abs(rgb.r - rgb.g) + Math.abs(rgb.g - rgb.b) + Math.abs(rgb.r - rgb.b);
 
   if (!hasImage(rgb))
@@ -148,52 +150,6 @@ function getEnvironmentFromColor(rgb) {
 }
 
 
-function getAverageRGB(imgEl) {
-    
-  var blockSize = 1, // only visit every 5 pixels
-      defaultRGB = {r:0,g:0,b:0}, // for non-supporting envs
-      canvas = document.createElement('canvas'),
-      context = canvas.getContext && canvas.getContext('2d'),
-      data, width, height,
-      i = -4,
-      length,
-      rgb = {r:0,g:0,b:0},
-      count = 0;
-      
-  if (!context) {
-      return defaultRGB;
-  }
-  
-  height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
-  width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
-  
-  context.drawImage(imgEl, 0, 0);
-  
-  try {
-      data = context.getImageData(0, 0, width, height);
-  } catch(e) {
-      /* security error, img on diff domain */alert('x');
-      return defaultRGB;
-  }
-  
-  length = data.data.length;
-  
-  while ( (i += blockSize * 4) < length ) {
-      ++count;
-      rgb.r += data.data[i];
-      rgb.g += data.data[i+1];
-      rgb.b += data.data[i+2];
-  }
-  
-  // ~~ used to floor values
-  rgb.r = ~~(rgb.r/count);
-  rgb.g = ~~(rgb.g/count);
-  rgb.b = ~~(rgb.b/count);
-  
-  return rgb;
-  
-}
-
 function updateRGB(mapLocation) {
   const rgb = mapLocation.rgb;
   const rgbString = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
@@ -214,20 +170,20 @@ function updateRGB(mapLocation) {
       shuffle(voices);
       voice_index = 0;
     }
-  
+
     const voice = voices[voice_index];
     voice_index += 1;
     document.getElementById('language-control').textContent = voice.slice(2, -4);
     voiceAudio.setAttribute('src', 'static/voces/' + voice);
     voiceAudio.load();
     voiceAudio.play();
-  
-  
+
+
     if (instrumental_index == null || instrumental_index >= instrumentals.length) {
       shuffle(instrumentals);
       instrumental_index = 0;
     }
-  
+
     const instrumental = instrumentals[instrumental_index];
     instrumental_index += 1;
     console.log("Reproduciendo " + instrumental);
@@ -272,6 +228,7 @@ function onImageLoad() {
 }
 
 
+// move to location function
 function goToLocation(mapLocation, addToLastVisited=true) {
 
   const fixedLat = mapLocation.lat.toFixed(3);
@@ -303,7 +260,7 @@ function goToLocation(mapLocation, addToLastVisited=true) {
   if (!mapLocation.hasOwnProperty('index')) {
     mapLocation.index = mapHistory.findIndex(otherLocation => {
       return (mapLocation.lat == otherLocation.lat &&
-              mapLocation.lng == otherLocation.lng && 
+              mapLocation.lng == otherLocation.lng &&
               mapLocation.zoom == otherLocation.zoom);
     })
     if (mapLocation.index < 0) {
@@ -315,7 +272,7 @@ function goToLocation(mapLocation, addToLastVisited=true) {
     }
   }
 
-  if (!mapLocation.hasOwnProperty('rgb')) { 
+  if (!mapLocation.hasOwnProperty('rgb') || !mapLocation.hasOwnProperty('palette')) {
     var staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap";
     //Set the Google Map Center.
     staticMapUrl += "?center=" + mapLocation.lat + "," + mapLocation.lng;
@@ -335,57 +292,33 @@ function goToLocation(mapLocation, addToLastVisited=true) {
   }
 }
 
-/**
-* The CenterControl adds a control to the map that recenters the map on
-* Chicago.
-* This constructor takes the control DIV as an argument.
-* @constructor
-*/
-function CenterControl(controlDiv, map) {
 
-  // Set CSS for the control border.
-  var controlUI = document.createElement('div');
-  controlUI.classList.add('controlBorder');
-  controlUI.title = 'Click to go to Chicago';
-  controlDiv.appendChild(controlUI);
-
-  // Set CSS for the control interior.
-  var controlText = document.createElement('div');
-  controlText.classList.add('controlInterior');
-  controlText.textContent = 'Chicago';
-  controlUI.appendChild(controlText);
-
-  // Setup the click event listeners: simply set the map to Chicago.
-  controlUI.addEventListener('click', function() {
-    map.setCenter(chicago);
-  });
-}
-
+// map controls constructors
 function BackControl(controlDiv, map) {
 
   // Set CSS for the control border.
   var controlUI = document.createElement('div');
   controlUI.classList.add('controlBorder');
-  controlUI.title = 'Click to go back';
+  controlUI.title = 'Volver';
   controlDiv.appendChild(controlUI);
 
   // Set CSS for the control interior.
   var controlText = document.createElement('div');
   controlText.classList.add('controlInterior');
   controlUI.appendChild(controlText);
-  
+
   var controlArrow = document.createElement('i');
   controlArrow.classList.add('fa');
   controlArrow.classList.add('fa-arrow-left');
   controlText.appendChild(controlArrow);
-    
+
   controlUI.addEventListener('click', function() {
     if (lastVisited.length == 0) {
       return;
     }
     goToLocation(mapHistory[lastVisited.pop()], false);
   });
-  
+
 }
 
 function TitleControl(controlDiv, map) {
@@ -430,13 +363,13 @@ function HistoryControl(controlDiv, map) {
   controlHistory.classList.add('dropdown');
   controlHistory.textContent = 'Historial';
   controlUI.appendChild(controlHistory);
-  
+
   // Set CSS for the control interior.
   var controlHistoryContent = document.createElement('div');
   controlHistoryContent.classList.add('controlBorder');
   controlHistoryContent.classList.add('dropdown-content');
   controlHistory.appendChild(controlHistoryContent);
-  
+
   addHistoryOption = function (mapLocation) {
     // Set CSS for the control interior.
     var controlHistoryOption = document.createElement('div');
@@ -453,7 +386,7 @@ function HistoryControl(controlDiv, map) {
   addHistoryOption(firstLocation);
   const rgb = firstLocation.rgb;
   firstLocation.historyOption.style.backgroundColor = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
-  
+
 }
 
 function RecommendationsControl(controlDiv, map) {
@@ -461,7 +394,6 @@ function RecommendationsControl(controlDiv, map) {
   // Set CSS for the control border.
   var controlUI = document.createElement('div');
   controlUI.classList.add('controlBorder');
-  // controlUI.title = 'Click to go to Chicago';
   controlDiv.appendChild(controlUI);
 
   // Set CSS for the control interior.
@@ -470,13 +402,13 @@ function RecommendationsControl(controlDiv, map) {
   controlRecommendations.classList.add('dropdown');
   controlRecommendations.textContent = 'Recomendaciones';
   controlUI.appendChild(controlRecommendations);
-  
+
   // Set CSS for the control interior.
   var controlRecommendationsContent = document.createElement('div');
   controlRecommendationsContent.classList.add('controlBorder');
   controlRecommendationsContent.classList.add('dropdown-content');
   controlRecommendations.appendChild(controlRecommendationsContent);
-  
+
   recommendations.forEach(mapLocation => {
     // Set CSS for the control interior.
     var controlRecommendationsOption = document.createElement('div');
@@ -491,10 +423,6 @@ function RecommendationsControl(controlDiv, map) {
     });
     controlRecommendationsContent.appendChild(controlRecommendationsOption);
   });
-  
-
-
-  
 }
 
 function JumpCoordinatesControl(controlDiv, map) {
@@ -517,14 +445,13 @@ function JumpCoordinatesControl(controlDiv, map) {
   controlLatitude.max = '90';
   controlLatitude.min = '-90';
   controlLatitude.placeholder = firstLocation.lat.toFixed(3);
-  // controlLatitude.placeholder="-31.4381414";
   controlLatitude.textContent = 'Latitud';
   controlLatitude.style.display = 'block';
   controlCoordinates.appendChild(controlLatitude);
   const controlValidity = document.createElement('span');
   controlValidity.classList.add('validity');
   controlCoordinates.appendChild(controlValidity);
-  
+
 
   // Set CSS for the control Longitude.
   controlLongitude = document.createElement('input');
@@ -533,7 +460,6 @@ function JumpCoordinatesControl(controlDiv, map) {
   controlLongitude.step = 'any';
   controlLongitude.required = true;
   controlLongitude.placeholder = firstLocation.lng.toFixed(3);
-  // controlLongitude.placeholder="-64.1955601";
   controlLongitude.textContent = 'Longitud';
   controlLongitude.style.display = 'block';
   controlCoordinates.appendChild(controlLongitude);
@@ -542,9 +468,6 @@ function JumpCoordinatesControl(controlDiv, map) {
   var controlGo = document.createElement('button');
   controlGo.classList.add('controlInterior');
   controlGo.type = 'submit'
-  // controlGo.style.display = 'inline';
-  // controlGo.style.clear = "none";
-  // controlGo.style.clear = "none";
   controlGo.textContent = 'Go';
   controlUI.appendChild(controlGo);
 
@@ -552,11 +475,13 @@ function JumpCoordinatesControl(controlDiv, map) {
     event.preventDefault();
     const lat = parseFloat(controlLatitude.value);
     const lng = parseFloat(controlLongitude.value);
-    if (lat >= -90 && lat <= 90 && !isNaN(lng)) 
+    if (lat >= -90 && lat <= 90 && !isNaN(lng))
       goToLocation({lat: lat, lng: lng});
   });
 
 }
+
+
 function initMap() {
   var params = new URLSearchParams(window.location.search);
 
@@ -570,10 +495,10 @@ function initMap() {
     firstLocation.lng = paramLng;
     mapOptions.center.lng = paramLng;
   }
-  map = new google.maps.Map(document.getElementById("map"), 
+  map = new google.maps.Map(document.getElementById("map"),
     mapOptions
   );
-          
+
   var titleControlDiv = document.createElement('div');
   var titleControl = new TitleControl(titleControlDiv, map);
 
@@ -603,12 +528,5 @@ function initMap() {
 
   recommendationsControlDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(recommendationsControlDiv);
-
-
-  // var infowindow = new google.maps.InfoWindow({
-  //   content: 'Change the zoom level',
-  //   position: mapOptions.center
-  // });
-  // infowindow.open(map);
 
 }
