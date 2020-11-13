@@ -25,6 +25,9 @@ function getRandomElement(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function getRGBString(rgb) {
+  return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+}
 
 // map initialization variables
 const firstLocation = {
@@ -32,7 +35,7 @@ const firstLocation = {
   lng: -122.015,
   zoom: 14,
   index: 0,
-  rgb: {r: 92, g: 93, b: 96}
+  palette: [[92, 93, 96]]
 }
 
 
@@ -90,15 +93,13 @@ var paletteQuality = 1;
 // map controls variables
 const recommendations = [
   {
-    // 'rgb': {'r': 128, 'g': 128, 'b': 116},
-    rgb: {r: 141, g: 140, b: 127},    // colorthief
+    palette: [[141, 140, 127]],    // colorthief
     lat: -31.438,
     lng: -64.195,
     zoom: 14,
   },
   {
-    // rgb: {r: 104, g: 107, b: 100},
-    rgb: {r: 95, g: 100, b: 93}, // colorthief
+    palette: [[95, 100, 93]], // colorthief
     lat: -42.91,
     lng: -71.32,
     zoom: 14,
@@ -117,8 +118,11 @@ var addHistoryOption;
 
 // color functions
 function hasImage(rgb) {
-  const noImageryDiff = Math.abs(rgb.r - 227) + Math.abs(rgb.g - 227) + Math.abs(rgb.b - 219);
-  const blankImageDiff = Math.abs(rgb.r - 14) + Math.abs(rgb.g - 14) + Math.abs(rgb.b - 14);
+  const r = rgb[0];
+  const g = rgb[1];
+  const b = rgb[2];
+  const noImageryDiff = Math.abs(r - 227) + Math.abs(g - 227) + Math.abs(b - 219);
+  const blankImageDiff = Math.abs(r - 14) + Math.abs(g - 14) + Math.abs(b - 14);
 
   return !(noImageryDiff < 3 || blankImageDiff < 3);
 }
@@ -126,18 +130,21 @@ function hasImage(rgb) {
 
 function getEnvironmentFromColor(rgb) {
   var environment = null;
+  const r = rgb[0];
+  const g = rgb[1];
+  const b = rgb[2];
 
-  const colorDiff = Math.abs(rgb.r - rgb.g) + Math.abs(rgb.g - rgb.b) + Math.abs(rgb.r - rgb.b);
+  const colorDiff = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
 
   if (!hasImage(rgb))
     environment = null;
-  else if (rgb.g > rgb.r + 15 && rgb.g > rgb.b + 10) {
+  else if (g > r + 15 && g > b + 10) {
     if (Math.random() < 0.5)
       environment = 'bosque';
     else
       environment = 'selva';
   }
-  else if (rgb.r > rgb.b + 15 && rgb.r > rgb.g + 15)
+  else if (r > b + 15 && r > g + 15)
     environment = 'desierto';
   else if (colorDiff < 45)
     environment = 'urbe';
@@ -151,8 +158,8 @@ function getEnvironmentFromColor(rgb) {
 
 
 function updateRGB(mapLocation) {
-  const rgb = mapLocation.rgb;
-  const rgbString = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
+  const rgb = mapLocation.palette[0];
+  const rgbString = getRGBString(rgb)
   document.getElementById('title-control').textContent = rgbString;
   document.getElementById('title-control').style.backgroundColor = rgbString;
   if (mapLocation.hasOwnProperty('historyOption')) {
@@ -161,7 +168,7 @@ function updateRGB(mapLocation) {
 
   console.log("Latitud: " + mapLocation.lat + " Longitud: " + mapLocation.lng);
   mapLocation.palette.forEach(color => {
-    const colorString = 'rgb('+color[0]+','+color[1]+','+color[2]+')';
+    const colorString = getRGBString(color);
     console.log("%c " + colorString, "background: "+colorString);
   });
 
@@ -211,18 +218,11 @@ function updateRGB(mapLocation) {
 
 
 function onImageLoad() {
-  // currentLocation.rgb = getAverageRGB(document.getElementById('imgMap'));
-  // console.log(colorThief.getColor(document.getElementById('imgMap')))
   if (paletteSize != 1) {
-    const palette = colorThief.getPalette(document.getElementById('imgMap'), paletteSize, paletteQuality);
-    const rgb = palette[0];
-    currentLocation.rgb = {r: rgb[0], g: rgb[1], b: rgb[2]};
-    currentLocation.palette = palette;
+    currentLocation.palette = colorThief.getPalette(document.getElementById('imgMap'), paletteSize, paletteQuality);
   }
   else {
-    const rgb = colorThief.getColor(document.getElementById('imgMap'), paletteQuality);
-    currentLocation.rgb = {r: rgb[0], g: rgb[1], b: rgb[2]};
-    currentLocation.palette = [rgb];
+    currentLocation.palette = colorThief.getColor(document.getElementById('imgMap'), paletteQuality);
   }
   updateRGB(currentLocation);
 }
@@ -268,11 +268,11 @@ function goToLocation(mapLocation, addToLastVisited=true) {
       mapHistory.push(mapLocation);
       addHistoryOption(mapLocation);
     } else {
-      mapLocation.rgb = mapHistory[mapLocation.index].rgb;
+      mapLocation.palette = mapHistory[mapLocation.index].palette;
     }
   }
 
-  if (!mapLocation.hasOwnProperty('rgb') || !mapLocation.hasOwnProperty('palette')) {
+  if (!mapLocation.hasOwnProperty('palette')) {
     var staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap";
     //Set the Google Map Center.
     staticMapUrl += "?center=" + mapLocation.lat + "," + mapLocation.lng;
@@ -336,8 +336,7 @@ function TitleControl(controlDiv, map) {
   controlTitle.textContent = 'Título del Texto';
   controlUI.appendChild(controlTitle);
 
-  const rgb = firstLocation.rgb;
-  const rgbString = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
+  const rgbString = getRGBString(firstLocation.palette[0]);
   controlTitle.textContent = rgbString;
   controlTitle.style.backgroundColor = rgbString;
 
@@ -384,8 +383,8 @@ function HistoryControl(controlDiv, map) {
   }
 
   addHistoryOption(firstLocation);
-  const rgb = firstLocation.rgb;
-  firstLocation.historyOption.style.backgroundColor = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
+  const rgbString = getRGBString(firstLocation.palette[0]);
+  firstLocation.historyOption.style.backgroundColor = rgbString;
 
 }
 
@@ -415,8 +414,8 @@ function RecommendationsControl(controlDiv, map) {
     controlRecommendationsOption.classList.add('controlInterior');
     controlRecommendationsOption.classList.add('dropdown-item');
     controlRecommendationsOption.textContent = mapLocation.lat.toFixed(3) + ', ' + mapLocation.lng.toFixed(3);
-    const rgb = mapLocation.rgb;
-    controlRecommendationsOption.style.backgroundColor = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
+    const rgbString = getRGBString(mapLocation.palette[0]);
+    controlRecommendationsOption.style.backgroundColor = rgbString;
     // mapLocation.historyOption = controlRecommendationsOption
     controlRecommendationsOption.addEventListener('click', function() {
       goToLocation(mapLocation);
