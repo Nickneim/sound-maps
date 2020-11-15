@@ -31,11 +31,11 @@ function getRGBString(rgb) {
 
 // map initialization variables
 const firstLocation = {
-  lat: 36.964,
-  lng: -122.015,
-  zoom: 14,
-  index: 0,
-  palette: [[92, 93, 96]]
+  lat: 0,
+  lng: 0,
+  zoom: 2,
+  // index: -1,
+  // palette: [[92, 93, 96]]
 }
 
 
@@ -44,7 +44,7 @@ const mapOptions = {
   center: {'lat':firstLocation.lat, 'lng':  firstLocation.lng},
   mapTypeId: 'satellite',
   maxZoom: 17,
-  minZoom: 14,
+  minZoom: Math.min(14, firstLocation.zoom),
   gestureHandling: 'none',
   draggableCursor: 'default',
   disableDefaultUI: true,
@@ -52,6 +52,7 @@ const mapOptions = {
 };
 
 var map;
+var firstVisit = true;
 
 
 // audio variables
@@ -228,7 +229,33 @@ function onImageLoad() {
 }
 
 
-// move to location function
+// movement functions
+function smoothZoom(max, nextZoom) {
+  if (nextZoom > max) {
+      return;
+  }
+  else {
+      google.maps.event.addListenerOnce(map, 'zoom_changed', function(event){
+          smoothZoom(max, nextZoom + 1);
+      });
+      setTimeout(function(){map.setZoom(nextZoom)}, 120);
+  }
+}
+
+
+function doFirstVisit(mapLocation) {
+  map.panTo({lat: mapLocation.lat, lng: mapLocation.lng});
+  smoothZoom(14, map.getZoom() + 1);
+  const finishFirstVisit = google.maps.event.addListener(map, 'zoom_changed', function(event){
+    if (map.getZoom() < 14)
+      return;
+    google.maps.event.removeListener(finishFirstVisit);
+    map.setOptions({minZoom: 14});
+    goToLocation(mapLocation);
+});
+}
+
+
 function goToLocation(mapLocation, addToLastVisited=true) {
 
   const fixedLat = mapLocation.lat.toFixed(3);
@@ -336,9 +363,9 @@ function TitleControl(controlDiv, map) {
   controlTitle.textContent = 'Título del Texto';
   controlUI.appendChild(controlTitle);
 
-  const rgbString = getRGBString(firstLocation.palette[0]);
-  controlTitle.textContent = rgbString;
-  controlTitle.style.backgroundColor = rgbString;
+  // const rgbString = getRGBString(firstLocation.palette[0]);
+  // controlTitle.textContent = rgbString;
+  // controlTitle.style.backgroundColor = rgbString;
 
   // Set CSS for the control interior.
   var controlLanguage = document.createElement('div');
@@ -382,9 +409,9 @@ function HistoryControl(controlDiv, map) {
     controlHistoryContent.insertBefore(controlHistoryOption, controlHistoryContent.firstChild);
   }
 
-  addHistoryOption(firstLocation);
-  const rgbString = getRGBString(firstLocation.palette[0]);
-  firstLocation.historyOption.style.backgroundColor = rgbString;
+  // addHistoryOption(firstLocation);
+  // const rgbString = getRGBString(firstLocation.palette[0]);
+  // firstLocation.historyOption.style.backgroundColor = rgbString;
 
 }
 
@@ -475,7 +502,13 @@ function JumpCoordinatesControl(controlDiv, map) {
     const lat = parseFloat(controlLatitude.value);
     const lng = parseFloat(controlLongitude.value);
     if (lat >= -90 && lat <= 90 && !isNaN(lng))
-      goToLocation({lat: lat, lng: lng});
+      if (firstVisit) {
+        firstVisit = false;
+        doFirstVisit({lat: lat, lng: lng});
+      }
+      else {
+        goToLocation({lat: lat, lng: lng});
+      }
   });
 
 }
@@ -486,17 +519,19 @@ function initMap() {
 
   const paramLat = parseFloat(params.get('lat'))
   const paramLng = parseFloat(params.get('lng'))
-  if (!isNaN(paramLat)) {
-    firstLocation.lat = paramLat;
-    mapOptions.center.lat = paramLat;
-  }
-  if (!isNaN(paramLng)){
-    firstLocation.lng = paramLng;
-    mapOptions.center.lng = paramLng;
-  }
+
   map = new google.maps.Map(document.getElementById("map"),
     mapOptions
   );
+  
+  if (!isNaN(paramLat) && !isNaN(paramLng)) {
+
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+      setTimeout(function(){doFirstVisit({lat: paramLat, lng: paramLng});}, 1000);
+      // do something only the first time the map is loaded
+    });
+  }
+  
 
   var titleControlDiv = document.createElement('div');
   var titleControl = new TitleControl(titleControlDiv, map);
