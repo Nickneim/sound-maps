@@ -48,7 +48,6 @@ const mapOptions = {
   gestureHandling: 'none',
   draggableCursor: 'default',
   disableDefaultUI: true,
-  zoomControl: true
 };
 
 var map;
@@ -103,6 +102,7 @@ var controlLongitude;
 
 var addHistoryOption;
 
+const controlDivs = {'introduction': [], 'normal': []};
 
 // color functions
 function hasImage(rgb) {
@@ -231,14 +231,20 @@ function smoothZoom(max, nextZoom) {
 
 
 function doFirstVisit(mapLocation) {
+  controlDivs['introduction'].forEach(controlDiv => { 
+    controlDiv.style.display = 'none';
+  })
   map.panTo({lat: mapLocation.lat, lng: mapLocation.lng});
   smoothZoom(14, map.getZoom() + 1);
   const finishFirstVisit = google.maps.event.addListener(map, 'zoom_changed', function(event){
     if (map.getZoom() < 14)
       return;
     google.maps.event.removeListener(finishFirstVisit);
-    map.setOptions({minZoom: 14});
+    map.setOptions({minZoom: 14, zoomControl: true});
     goToLocation(mapLocation);
+    controlDivs['normal'].forEach(controlDiv => { 
+      controlDiv.style.display = 'block';
+    })
 });
 }
 
@@ -508,6 +514,42 @@ function JumpCoordinatesControl(controlDiv, map) {
 }
 
 
+function ScrollingTextsControl(controlDiv, map) {
+  // Set CSS for the control border.
+  const controlContainer = document.createElement('div');
+  controlDiv.appendChild(controlContainer);
+  // controlContainer.style.float = 'right';
+  // controlContainer.style.paddingRight = '400px';
+  // controlContainer.style.paddingRight = '40%';
+  controlDiv.style.paddingRight = '40%';
+
+  const controlMarquee1 = document.createElement('div');
+  controlMarquee1.classList.add('marquee');
+
+  
+  const controlMarquee2 = document.createElement('div');
+  controlMarquee2.classList.add('marquee');
+  controlMarquee2.classList.add('marquee2');
+
+  fetch('static/textos.txt')
+    .then(response => response.text())
+    .then(textos => {
+      // const paragraph1Div = document.createElement('div');
+      const paragraph1 = document.createElement('pre');
+      paragraph1.textContent = textos;
+      // const paragraph2Div = document.createElement('div');
+      const paragraph2 = document.createElement('pre');
+      paragraph2.textContent = textos;
+      // paragraph1Div.appendChild(paragraph1);
+      // paragraph2Div.appendChild(paragraph2);
+      controlMarquee1.appendChild(paragraph1);
+      controlMarquee2.appendChild(paragraph2);
+    });
+  
+  controlContainer.appendChild(controlMarquee1);
+  controlContainer.appendChild(controlMarquee2);
+}
+
 function initMap() {
   var params = new URLSearchParams(window.location.search);
 
@@ -517,44 +559,69 @@ function initMap() {
   map = new google.maps.Map(document.getElementById("map"),
     mapOptions
   );
-  
-  if (!isNaN(paramLat) && !isNaN(paramLng)) {
-
-    google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
-      setTimeout(function(){doFirstVisit({lat: paramLat, lng: paramLng});}, 1000);
-      // do something only the first time the map is loaded
-    });
-  }
-  
+    
 
   var titleControlDiv = document.createElement('div');
   var titleControl = new TitleControl(titleControlDiv, map);
 
   titleControlDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(titleControlDiv);
+  controlDivs['normal'].push(titleControlDiv);
 
   var jumpCoordinatesControlDiv = document.createElement('div');
   var jumpCoordinatesControl = new JumpCoordinatesControl(jumpCoordinatesControlDiv, map);
 
   jumpCoordinatesControlDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(jumpCoordinatesControlDiv);
+  controlDivs['normal'].push(jumpCoordinatesControlDiv);
 
   var backControlDiv = document.createElement('div');
   var backControl = new BackControl(backControlDiv, map);
 
   backControlDiv.index = 3;
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(backControlDiv);
+  controlDivs['normal'].push(backControlDiv);
 
   var historyControlDiv = document.createElement('div');
   var historyControl = new HistoryControl(historyControlDiv, map);
 
   historyControlDiv.index = 2;
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(historyControlDiv);
+  controlDivs['normal'].push(historyControlDiv);
 
   var recommendationsControlDiv = document.createElement('div');
   var recommendationsControl = new RecommendationsControl(recommendationsControlDiv, map);
 
   recommendationsControlDiv.index = 1;
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(recommendationsControlDiv);
+  controlDivs['normal'].push(recommendationsControlDiv);
+
+  var scrollingTextsControlDiv = document.createElement('div');
+  var scrollingTextsControl = new ScrollingTextsControl(scrollingTextsControlDiv, map);
+
+  scrollingTextsControlDiv.index = 0;
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(scrollingTextsControlDiv);
+  controlDivs['introduction'].push(scrollingTextsControlDiv);
+
+
+  controlDivs['normal'].forEach(controlDiv => { 
+    controlDiv.style.display = 'none';
+  })
+  controlDivs['introduction'].forEach(controlDiv => { 
+    controlDiv.style.display = 'block';
+  })
+
+  if (!isNaN(paramLat) && !isNaN(paramLng)) {
+
+    controlDivs['introduction'].forEach(controlDiv => { 
+      controlDiv.style.display = 'none';
+    })  
+    google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
+      setTimeout(function(){doFirstVisit({lat: paramLat, lng: paramLng});}, 1000);
+      // do something only the first time the map is loaded
+    });
+  }
+  
+  
 
 }

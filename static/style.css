@@ -65,3 +65,39 @@ input:invalid+span:after {
 .dropdown-item:hover {
   background-color: #f1f1f1;
 }
+
+.marquee {
+  height: 100%;
+  padding-right: 100%;
+  text-align: right;
+  color: white;
+  text-shadow: 2px 2px 2px black; 
+  white-space: normal;
+  /* overflow: hidden; */
+  box-sizing: border-box;
+  font-family : Roboto,Arial,sans-serif;
+  font-size : 20px;
+  line-height : 38px;
+  position: absolute;
+}
+
+.marquee pre {
+  display: inline-block;
+  padding-top: -100%;
+  animation: marquee 60s linear infinite;
+}
+
+.marquee2 pre {
+  /* -half of marquee div animation duration */
+  animation-delay: -30s;
+  display: inline-block;
+}
+/* 
+.marquee div pre {
+  margin-top: 50px;
+} */
+
+@keyframes marquee {
+  0%   { transform: translate(0, 100%); }
+  100% { transform: translate(0, -100%); }
+}
