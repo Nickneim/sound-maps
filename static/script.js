@@ -92,20 +92,7 @@ var paletteQuality = 1;
 
 
 // map controls variables
-const recommendations = [
-  {
-    palette: [[141, 140, 127]],    // colorthief
-    lat: -31.438,
-    lng: -64.195,
-    zoom: 14,
-  },
-  {
-    palette: [[95, 100, 93]], // colorthief
-    lat: -42.91,
-    lng: -71.32,
-    zoom: 14,
-  }
-]
+const recommendations = [];
 
 const mapHistory = [firstLocation];
 const lastVisited = [];
@@ -238,7 +225,7 @@ function smoothZoom(max, nextZoom) {
       google.maps.event.addListenerOnce(map, 'zoom_changed', function(event){
           smoothZoom(max, nextZoom + 1);
       });
-      setTimeout(function(){map.setZoom(nextZoom)}, 120);
+      setTimeout(function(){map.setZoom(nextZoom)}, 80);
   }
 }
 
@@ -435,7 +422,11 @@ function RecommendationsControl(controlDiv, map) {
   controlRecommendationsContent.classList.add('dropdown-content');
   controlRecommendations.appendChild(controlRecommendationsContent);
 
-  recommendations.forEach(mapLocation => {
+
+  fetch('static/recomendaciones.json')
+  .then(response => response.json())
+  .then(json => json.forEach(mapLocation => {
+    recommendations.push(mapLocation);
     // Set CSS for the control interior.
     var controlRecommendationsOption = document.createElement('div');
     controlRecommendationsOption.classList.add('controlInterior');
@@ -448,7 +439,10 @@ function RecommendationsControl(controlDiv, map) {
       goToLocation(mapLocation);
     });
     controlRecommendationsContent.appendChild(controlRecommendationsOption);
-  });
+    })
+  );
+
+
 }
 
 function JumpCoordinatesControl(controlDiv, map) {
@@ -526,7 +520,7 @@ function initMap() {
   
   if (!isNaN(paramLat) && !isNaN(paramLng)) {
 
-    google.maps.event.addListenerOnce(map, 'idle', function(){
+    google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
       setTimeout(function(){doFirstVisit({lat: paramLat, lng: paramLng});}, 1000);
       // do something only the first time the map is loaded
     });
