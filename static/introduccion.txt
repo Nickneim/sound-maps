@@ -1,0 +1,10 @@
+Bienvenidx
+SPAMAPS es una obra de net.art diseñada por estudiantes de la Universidad Nacional de Córdoba a partir de la reflexión de los límites que tenemos para indagar el mundo y a su vez los límites de su representación virtual. 
+De idiomas desconocidos, paisajes inimaginables, colores, culturas, sonidos, de lo que hay en la web y de las ausencias, de lo representable y aquello que no. De la posibilidad utópica de viajar sin importar tu procedencia.
+La forma de viajar es a través de coordenadas, esto es Latitud (de 90 a -90) como Longitud (de 180 a -180). De esta forma no se puede seleccionar lugares específicos a los que visitar, sino descubrir paisajes nuevos dejando de lado los límites geográficos.
+
+Equipo: 
+Nicolás Mauricio Montes
+Leandro Doliri
+Azul Varela Rinaldoni
+Pedro Antonio Sota Taier

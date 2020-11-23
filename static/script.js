@@ -550,6 +550,23 @@ function ScrollingTextsControl(controlDiv, map) {
   controlContainer.appendChild(controlMarquee2);
 }
 
+function IntroductionTextControl(controlDiv, map) {
+  // Set CSS for the control border.
+  const controlContainer = document.createElement('div');
+  controlDiv.appendChild(controlContainer);
+
+  const controlText = document.createElement('pre');
+  controlText.classList.add('introduction');
+
+  fetch('static/introduccion.txt')
+    .then(response => response.text())
+    .then(introduction => {
+      controlText.textContent = introduction;
+    });
+  
+  controlContainer.appendChild(controlText);
+}
+
 function initMap() {
   var params = new URLSearchParams(window.location.search);
 
@@ -602,6 +619,14 @@ function initMap() {
   scrollingTextsControlDiv.index = 0;
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(scrollingTextsControlDiv);
   controlDivs['introduction'].push(scrollingTextsControlDiv);
+
+
+  var introductionTextControlDiv = document.createElement('div');
+  var introductionTextControl = new IntroductionTextControl(introductionTextControlDiv, map);
+
+  introductionTextControlDiv.index = 0;
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(introductionTextControlDiv);
+  controlDivs['introduction'].push(introductionTextControlDiv);
 
 
   controlDivs['normal'].forEach(controlDiv => { 

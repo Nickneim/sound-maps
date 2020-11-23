@@ -101,3 +101,17 @@ input:invalid+span:after {
   0%   { transform: translate(0, 100%); }
   100% { transform: translate(0, -100%); }
 }
+
+.introduction {
+  padding-top: 5%;
+  height: 100%;
+  width: 35%;
+  text-align: justify;
+  color: white;
+  text-shadow: 2px 2px 2px black; 
+  white-space: pre-line;
+  box-sizing: border-box;
+  font-family : Roboto,Arial,sans-serif;
+  font-size : 20px;
+  line-height : normal;
+}
