@@ -513,6 +513,64 @@ function JumpCoordinatesControl(controlDiv, map) {
 
 }
 
+function IntroductionJumpCoordinatesControl(controlDiv, map) {
+  // Set CSS for the control border.
+  const controlUI = document.createElement('form');
+  controlUI.classList.add('controlBorder');
+  controlUI.classList.add('vertical-center');
+  controlUI.title = 'Coordenadas';
+  controlUI.style.overflow = 'hidden';
+  controlDiv.appendChild(controlUI);
+
+  const controlCoordinates = document.createElement('div');
+  controlCoordinates.style.float = 'left';
+  controlUI.appendChild(controlCoordinates);
+  // Set CSS for the control Latitude.
+  controlLatitude = document.createElement('input');
+  controlLatitude.classList.add('controlInterior');
+  controlLatitude.type = 'number';
+  controlLatitude.step = 'any';
+  controlLatitude.required = true;
+  controlLatitude.max = '90';
+  controlLatitude.min = '-90';
+  controlLatitude.placeholder = firstLocation.lat.toFixed(3);
+  controlLatitude.textContent = 'Latitud';
+  controlLatitude.style.display = 'block';
+  controlCoordinates.appendChild(controlLatitude);
+  const controlValidity = document.createElement('span');
+  controlValidity.classList.add('validity');
+  controlCoordinates.appendChild(controlValidity);
+
+
+  // Set CSS for the control Longitude.
+  controlLongitude = document.createElement('input');
+  controlLongitude.classList.add('controlInterior');
+  controlLongitude.type = 'number';
+  controlLongitude.step = 'any';
+  controlLongitude.required = true;
+  controlLongitude.placeholder = firstLocation.lng.toFixed(3);
+  controlLongitude.textContent = 'Longitud';
+  controlLongitude.style.display = 'block';
+  controlCoordinates.appendChild(controlLongitude);
+
+  // Set CSS for the control interior.
+  var controlGo = document.createElement('button');
+  controlGo.classList.add('controlInterior');
+  controlGo.type = 'submit'
+  controlGo.textContent = 'Go';
+  controlUI.appendChild(controlGo);
+
+  controlUI.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const lat = parseFloat(controlLatitude.value);
+    const lng = parseFloat(controlLongitude.value);
+    if (lat >= -90 && lat <= 90 && !isNaN(lng))
+      firstVisit = false;
+      doFirstVisit({lat: lat, lng: lng});
+  });
+
+}
+
 
 function ScrollingTextsControl(controlDiv, map) {
   // Set CSS for the control border.
@@ -628,6 +686,12 @@ function initMap() {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(introductionTextControlDiv);
   controlDivs['introduction'].push(introductionTextControlDiv);
 
+  var introductionJumpCoordinatesControlDiv = document.createElement('div');
+  var introductionJumpCoordinatesControl = new IntroductionJumpCoordinatesControl(introductionJumpCoordinatesControlDiv, map);
+
+  introductionJumpCoordinatesControlDiv.index = 1;
+  map.controls[google.maps.ControlPosition.TOP_CENTER].push(introductionJumpCoordinatesControlDiv);
+  controlDivs['introduction'].push(introductionJumpCoordinatesControlDiv);
 
   controlDivs['normal'].forEach(controlDiv => { 
     controlDiv.style.display = 'none';

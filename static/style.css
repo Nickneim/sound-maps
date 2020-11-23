@@ -104,6 +104,7 @@ input:invalid+span:after {
 
 .introduction {
   padding-top: 5%;
+  padding-left: 2%;
   height: 100%;
   width: 35%;
   text-align: justify;
@@ -114,4 +115,8 @@ input:invalid+span:after {
   font-family : Roboto,Arial,sans-serif;
   font-size : 20px;
   line-height : normal;
+}
+
+.vertical-center {
+  margin-top: 100%;
 }
