@@ -593,19 +593,35 @@ function ScrollingTextsControl(controlDiv, map) {
   controlMarquee2.classList.add('marquee');
   controlMarquee2.classList.add('marquee2');
 
+  // const paragraph1Div = document.createElement('div');
+  const marqueeDiv1 = document.createElement('div');
+  // const paragraph2Div = document.createElement('div');
+  const marqueeDiv2 = document.createElement('div');
+  // paragraph1Div.appendChild(paragraph1);
+  // paragraph2Div.appendChild(paragraph2);
+  controlMarquee1.appendChild(marqueeDiv1);
+  controlMarquee2.appendChild(marqueeDiv2);
   fetch('static/textos.txt')
     .then(response => response.text())
     .then(textos => {
-      // const paragraph1Div = document.createElement('div');
-      const paragraph1 = document.createElement('pre');
-      paragraph1.textContent = textos;
-      // const paragraph2Div = document.createElement('div');
-      const paragraph2 = document.createElement('pre');
-      paragraph2.textContent = textos;
-      // paragraph1Div.appendChild(paragraph1);
-      // paragraph2Div.appendChild(paragraph2);
-      controlMarquee1.appendChild(paragraph1);
-      controlMarquee2.appendChild(paragraph2);
+      textos.split("\n\n").forEach((texto, index) => {
+        let paragraph1 = document.createElement('pre');
+        paragraph1.textContent = texto;
+        let paragraph2 = document.createElement('pre');
+        paragraph2.textContent = texto;
+
+        if (index % 2 == 0) {
+          paragraph1.style.textAlign = 'right';
+          paragraph2.style.textAlign = 'right';
+        } else {
+          paragraph1.style.textAlign = 'left';
+          paragraph2.style.textAlign = 'left';
+        }
+
+        marqueeDiv1.appendChild(paragraph1);
+        marqueeDiv2.appendChild(paragraph2);
+
+      });
     });
   
   controlContainer.appendChild(controlMarquee1);
