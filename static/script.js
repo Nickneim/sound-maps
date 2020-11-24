@@ -541,7 +541,7 @@ function IntroductionJumpCoordinatesControl(controlDiv, map) {
   controlLatitude.required = true;
   controlLatitude.max = '90';
   controlLatitude.min = '-90';
-  controlLatitude.placeholder = firstLocation.lat.toFixed(3);
+  controlLatitude.placeholder = 'Latitud';
   controlLatitude.textContent = 'Latitud';
   controlLatitude.style.display = 'block';
   controlCoordinates.appendChild(controlLatitude);
@@ -556,7 +556,7 @@ function IntroductionJumpCoordinatesControl(controlDiv, map) {
   controlLongitude.type = 'number';
   controlLongitude.step = 'any';
   controlLongitude.required = true;
-  controlLongitude.placeholder = firstLocation.lng.toFixed(3);
+  controlLongitude.placeholder = 'Longitud';
   controlLongitude.textContent = 'Longitud';
   controlLongitude.style.display = 'block';
   controlCoordinates.appendChild(controlLongitude);
@@ -587,7 +587,7 @@ function ScrollingTextsControl(controlDiv, map) {
   // controlContainer.style.float = 'right';
   // controlContainer.style.paddingRight = '400px';
   // controlContainer.style.paddingRight = '40%';
-  controlDiv.style.paddingRight = '40%';
+  controlDiv.style.paddingLeft = '2.5%';
 
   const controlMarquee1 = document.createElement('div');
   controlMarquee1.classList.add('marquee');
@@ -699,7 +699,7 @@ function initMap() {
   var scrollingTextsControl = new ScrollingTextsControl(scrollingTextsControlDiv, map);
 
   scrollingTextsControlDiv.index = 0;
-  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(scrollingTextsControlDiv);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(scrollingTextsControlDiv);
   controlDivs['introduction'].push(scrollingTextsControlDiv);
 
 
@@ -707,7 +707,7 @@ function initMap() {
   var introductionTextControl = new IntroductionTextControl(introductionTextControlDiv, map);
 
   introductionTextControlDiv.index = 0;
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(introductionTextControlDiv);
+  map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(introductionTextControlDiv);
   controlDivs['introduction'].push(introductionTextControlDiv);
 
   var introductionJumpCoordinatesControlDiv = document.createElement('div');

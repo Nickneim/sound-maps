@@ -68,8 +68,8 @@ input:invalid+span:after {
 
 .marquee {
   height: 100%;
-  padding-right: 100%;
   text-align: right;
+  max-width: 40%;
   color: white;
   text-shadow: 2px 2px 2px black; 
   white-space: normal;
@@ -103,15 +103,14 @@ input:invalid+span:after {
 }
 
 .introduction {
-  padding-top: 5%;
-  padding-left: 2%;
   height: 100%;
-  width: 35%;
-  text-align: left;
+  max-width: 37.5%;
+  padding-left: 60%;
+  text-align: right;
   color: white;
-  text-shadow: 2px 2px 2px black; 
-  white-space: pre-line;
-  box-sizing: border-box;
+  text-shadow: 2px 2px 2px black;
+  /* box-sizing: border-box; */
+  white-space: pre-wrap;
   font-family : Roboto,Arial,sans-serif;
   font-size : 20px;
   line-height : normal;
