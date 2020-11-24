@@ -187,7 +187,10 @@ function updateRGB(mapLocation) {
     instrumentalAudio.play();
   }
   else {
-    voiceAudio.pause();
+    document.getElementById('language-control').textContent = 'Lo sentimos';
+    voiceAudio.setAttribute('src', 'static/Lo sentimos.mp3');
+    voiceAudio.load();
+    voiceAudio.play();
     instrumentalAudio.pause();
   }
 
@@ -195,8 +198,9 @@ function updateRGB(mapLocation) {
   const environment = getEnvironmentFromColor(rgb);
   console.log("Ubicación: " + environment);
 
-  if (environment == null)
+  if (environment == null){
     environmentAudio.pause();
+  }
   else {
     environmentAudio.setAttribute('src', 'static/ambiente/' + environment);
     environmentAudio.load();
@@ -526,7 +530,7 @@ function IntroductionJumpCoordinatesControl(controlDiv, map) {
   controlCoordinates.style.float = 'left';
   controlUI.appendChild(controlCoordinates);
   // Set CSS for the control Latitude.
-  controlLatitude = document.createElement('input');
+  const controlLatitude = document.createElement('input');
   controlLatitude.classList.add('controlInterior');
   controlLatitude.type = 'number';
   controlLatitude.step = 'any';
@@ -543,7 +547,7 @@ function IntroductionJumpCoordinatesControl(controlDiv, map) {
 
 
   // Set CSS for the control Longitude.
-  controlLongitude = document.createElement('input');
+  const controlLongitude = document.createElement('input');
   controlLongitude.classList.add('controlInterior');
   controlLongitude.type = 'number';
   controlLongitude.step = 'any';
