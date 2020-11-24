@@ -127,15 +127,19 @@ function getEnvironmentFromColor(rgb) {
   if (!hasImage(rgb))
     environment = null;
   else if (g > r + 15 && g > b + 10) {
-    if (Math.random() < 0.5)
-      environment = 'bosque';
-    else
-      environment = 'selva';
+    environment = 'selva y bosque';
   }
   else if (r > b + 15 && r > g + 15)
     environment = 'desierto';
-  else if (colorDiff < 45)
-    environment = 'urbe';
+  else if (r + 15 < b && r + 15 < g)
+    environment = 'mar-oceano-aguas';
+  else if (colorDiff < 45){
+    if (r > 160 && g > 160 && b > 160)
+      environment = 'nieve';
+    else
+      environment = 'urbe';
+  }
+
 
   if (environment != null) {
     return environment + '/' + getRandomElement(environments[environment]);

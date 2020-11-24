@@ -1,7 +1,59 @@
 {
-  "bosque": ["aguita.m4a", "bosque 1.flac", "cascada.mp3"],
-  "desierto": ["viento grave.mp3"],
-  "selva": ["SELVA 1.mp3", "SELVA 2.wav", "SELVA 3.wav"],
-  "urbe": ["CIUDAD 1.wav", "CIUDAD 4.wav", "CIUDAD 6.mp3", "CIUDAD 8.mp3",
-           "CIUDAD 2.mp3", "CIUDAD 5.wav", "CIUDAD 7.mp3", "festival osaka.mp3"]
+    "desierto":
+    [
+        "104319_proxima4_desert-monolith (online-audio-converter.com).mp3",
+        "427401_imjeax_desert-ambient-loop (online-audio-converter.com).mp3",
+        "454361_kyles_wind-light-desert-day-steady-eerie-with-crickets (online-audio-converter.com).mp3",
+        "5 (online-audio-converter.com).mp3",
+        "viento grave.mp3"
+    ],
+    "mar-oceano-aguas":
+    [
+        "456899__innorecords__zen-ocean-waves-ocean-waves-ambience.mp3",
+        "462594_eelke_rough-inconsistent-waves.mp3",
+        "463250_suburbanwizard_beach-waves-04_02.mp3",
+        "mar cobblestone beachbreake.mp3"
+    ],
+    "nieve":
+    [
+        "nieve ambiente, viento (1) (online-audio-converter.com).mp3",
+        "pasos en la nieve.mp3"
+    ],
+    "selva y bosque":
+    [
+        "104319_proxima4_desert-monolith.mp3",
+        "123041_itsmrjack_howler-monkey-jungle-1.mp3",
+        "427401_imjeax_desert-ambient-loop.mp3",
+        "454361_kyles_wind-light-desert-day-steady-eerie-with-crickets.mp3",
+        "493721__marchon11__ambience-scary-jungle.mp3",
+        "496320_burning-cicada-ltd_canyonwind.mp3",
+        "SELVA 1.mp3",
+        "SELVA 2.mp3",
+        "SELVA 3.mp3",
+        "aguita.m4a",
+        "belize jungle.mp3",
+        "bosque 1.flac",
+        "cascada.mp3",
+        "yucatan 1.mp3",
+        "yucatan 2 (online-audio-converter.com).mp3",
+        "yucatan 3 (online-audio-converter.com).mp3"
+    ],
+    "urbe":
+    [
+        "CIUDAD 1 CONVERTIR.mp3",
+        "CIUDAD 2.mp3",
+        "CIUDAD 4 CONVERTIR.mp3",
+        "CIUDAD 5 CONVERTIR.mp3",
+        "CIUDAD 6.mp3",
+        "CIUDAD 7.mp3",
+        "CIUDAD 8.mp3",
+        "Multitud charla CONVERTIR.mp3",
+        "bondi en arg CONVERTIR.mp3",
+        "cba av colon 2017 CONVERTIR.mp3",
+        "festival osaka.mp3",
+        "hanoi street.mp3",
+        "nepal CONVERTIR.mp3",
+        "pequeña ciudad rhodes CONVERTIR.mp3",
+        "south france bells CONVERTIR.mp3"
+    ]
 }
