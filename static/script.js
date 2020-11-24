@@ -528,6 +528,7 @@ function IntroductionJumpCoordinatesControl(controlDiv, map) {
   controlUI.classList.add('vertical-center');
   controlUI.title = 'Coordenadas';
   controlUI.style.overflow = 'hidden';
+  controlDiv.style.zIndex = '10';
   controlDiv.appendChild(controlUI);
 
   const controlCoordinates = document.createElement('div');
