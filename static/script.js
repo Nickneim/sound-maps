@@ -140,7 +140,9 @@ function getEnvironmentFromColor(rgb) {
       environment = 'urbe';
   }
 
-
+  if (hasImage(rgb) && environment == null) {
+    environment = getRandomElement(Object.keys(environments));
+  }
   if (environment != null) {
     return environment + '/' + getRandomElement(environments[environment]);
   }
