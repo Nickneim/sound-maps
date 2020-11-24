@@ -81,15 +81,15 @@ input:invalid+span:after {
   position: absolute;
 }
 
-.marquee pre {
+.marquee div {
   display: inline-block;
   padding-top: -100%;
-  animation: marquee 60s linear infinite;
+  animation: marquee 100s linear infinite;
 }
 
-.marquee2 pre {
+.marquee2 div {
   /* -half of marquee div animation duration */
-  animation-delay: -30s;
+  animation-delay: -50s;
   display: inline-block;
 }
 /* 
@@ -107,7 +107,7 @@ input:invalid+span:after {
   padding-left: 2%;
   height: 100%;
   width: 35%;
-  text-align: justify;
+  text-align: left;
   color: white;
   text-shadow: 2px 2px 2px black; 
   white-space: pre-line;
